@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cours Publiés</title>
+    <link rel="stylesheet" th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .card {
+            margin-bottom: 1.5rem;
+        }
+        .card-body, .card-header, .card-footer {
+            padding: 0.75rem;
+        }
+        .form-group textarea {
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="my-4">Cours Publiés</h1>
+    <div th:if="${isApprenant}">
+        <h3>Bienvenue, <span th:text="${utilisateur.nom}"></span>!</h3>
+    </div>
+    <div class="row">
+        <div th:each="cours : ${cours}" class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card h-100">
+                <div class="card-header">
+                    Publié par:
+                    <span th:if="${cours.ue.utilisateur != null and #authorization.expression('hasRole(''ENSEIGNANT'')')}">
+                        <span th:text="${cours.ue.utilisateur.nom}">Enseignant</span>
+                    </span>
+                    <span th:if="${cours.ue.utilisateur == null}">Inconnu</span>
+                    <br/>
+                    Date de publication: <span th:text="${cours.datePublication}"></span>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">UE: <span th:text="${cours.ue.intitule}"></span></h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Titre: <span th:text="${cours.titre}"></span></h6>
+                    <p class="card-text">
+                        <a th:href="@{/files/{filename}(filename=${cours.supportCours})}" target="_blank">Voir le support de cours</a>
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <form th:action="@{/admin/cours/{coursId}/comment(coursId=${cours.id})}" method="post">
+                        <div class="form-group">
+                            <label for="commentaire">Ajouter un commentaire</label>
+                            <textarea class="form-control" id="commentaire" name="commentaire" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2 btn-sm">Commenter</button>
+                    </form>
+
+                    <div th:each="comment : ${cours.commentaires}" class="mt-4">
+                        <p><strong th:text="${comment.utilisateur != null} ? ${comment.utilisateur.nom} : 'Utilisateur Inconnu'">Nom Utilisateur</strong>: <span th:text="${comment.texte}"></span></p>
+
+                        <form th:action="@{/admin/cours/{coursId}/comment/{commentId}/reply(coursId=${cours.id}, commentId=${comment.id})}" method="post">
+                            <div class="form-group">
+                                <label for="reponse">Répondre</label>
+                                <textarea class="form-control" id="reponse" name="reponse" rows="2"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-secondary mt-2 btn-sm">Répondre</button>
+                        </form>
+
+                        <div th:each="reply : ${comment.reponses}" class="ms-4">
+                            <p><strong th:text="${reply.utilisateur != null} ? ${reply.utilisateur.nom} : 'Utilisateur Inconnu'">Nom Réponse Utilisateur</strong>: <span th:text="${reply.texte}"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inclure jQuery -->
+<script th:src="@{https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js}"></script>
+<!-- Inclure Bootstrap JS -->
+<script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>

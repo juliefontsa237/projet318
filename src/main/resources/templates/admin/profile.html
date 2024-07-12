@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Profil Enseignant</title>
+    <link rel="stylesheet" th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Profil de l'Enseignant</h1>
+
+    <h5>UEs avec Cours Publiés:</h5>
+    <ul>
+        <li th:each="ue : ${ues}">
+            <strong th:text="${ue.intitule}"></strong> :
+            <span th:each="cours : ${ue.cours}">
+                <span th:text="${cours.titre}"></span><br/>
+            </span>
+        </li>
+    </ul>
+    <a class="btn btn-primary" th:href="@{/admin/dashboard}">Retour au Dashboard</a>
+</div>
+
+<!-- Inclure jQuery -->
+<script th:src="@{https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js}"></script>
+<!-- Inclure Bootstrap JS -->
+<script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>
